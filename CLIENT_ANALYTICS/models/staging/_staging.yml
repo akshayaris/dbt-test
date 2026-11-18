@@ -1,0 +1,63 @@
+version: 2
+
+# Documentation + automated data quality checks, kept right next to the code.
+# Every "dbt build" runs these tests; if a check fails, the tables built on
+# top of the bad data are NOT refreshed, so reports never show wrong numbers.
+models:
+  - name: stg_customers
+    description: "One row per customer (latest version received from the CRM)."
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Customer email address, lower-cased."
+        data_tests:
+          - not_null
+
+  - name: stg_orders
+    description: "One row per order placed on the e-commerce platform."
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Customer who placed the order."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: status
+        description: "Order status: placed, shipped, completed or returned."
+        data_tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'returned']
+
+  - name: stg_payments
+    description: "One row per payment, with amounts converted to rupees."
+    columns:
+      - name: payment_id
+        description: "Unique payment identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Order this payment belongs to."
+        data_tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+              config:
+                severity: warn   # flag it for the source team, but don't stop the pipeline
+      - name: payment_method
+        description: "upi, credit_card, net_banking or gift_card."
+        data_tests:
+          - accepted_values:
+              values: ['upi', 'credit_card', 'net_banking', 'gift_card']
+      - name: amount_inr
+        description: "Payment amount in Indian rupees."

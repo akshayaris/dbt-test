@@ -1,0 +1,16 @@
+version: 2
+
+# Where the raw data lives. Declared ONCE - every model refers to it by name,
+# so if the raw location ever changes, we change it here only.
+sources:
+  - name: raw
+    description: "Raw data exactly as it lands from the source systems."
+    database: DBT_DEMO
+    schema: RAW
+    tables:
+      - name: customers
+        description: "Customer master from the CRM."
+      - name: orders
+        description: "Orders from the e-commerce platform."
+      - name: payments
+        description: "Payments from the payment gateway (amounts arrive in paise)."

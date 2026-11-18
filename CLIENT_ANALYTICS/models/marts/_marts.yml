@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: "Business-ready order table: one row per order with the total amount paid. Use this for all revenue reporting."
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Customer who placed the order."
+      - name: status
+        description: "placed, shipped, completed or returned."
+      - name: amount_inr
+        description: "Total paid for the order, in rupees (sum of all payments)."
+      - name: number_of_payments
+        description: "How many payments were used (e.g. gift card + UPI = 2)."
+
+  - name: dim_customers
+    description: "Business-ready customer table with order history and lifetime value (returned orders excluded)."
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: lifetime_value_inr
+        description: "Total spent by the customer, in rupees, excluding returned orders."
+      - name: number_of_orders
+        description: "Number of non-returned orders."

@@ -1,0 +1,10 @@
+client_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: DBT_DEMO
+      schema: DBT
+      threads: 8

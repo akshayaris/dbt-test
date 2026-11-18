@@ -1,0 +1,21 @@
+name: client_analytics
+version: 1.0.0
+config-version: 2
+profile: client_analytics
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# One place to decide HOW each layer is built - no hand-written CREATE TABLE statements.
+models:
+  client_analytics:
+    staging:            # light clean-up of raw data, one model per source table
+      +materialized: view
+      +schema: staging  # -> DBT_DEMO.DBT_STAGING
+    marts:              # business-ready tables used by reports / dashboards
+      +materialized: table
+      +schema: marts    # -> DBT_DEMO.DBT_MARTS
